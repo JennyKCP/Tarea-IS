@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Sistema de solicitudes{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+<header><a href="{{ url_for('index') }}">Sistema de solicitudes</a><span>Registro · seguimiento · historial</span></header>
+<main>
+  {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}<section aria-live="polite" class="messages">{% for category, message in messages %}<p class="message {{ category }}">{{ message }}</p>{% endfor %}</section>{% endif %}{% endwith %}
+  {% block content %}{% endblock %}
+</main>
+<footer>Incremento académico · Flask + almacenamiento JSON local</footer>
+</body></html>
