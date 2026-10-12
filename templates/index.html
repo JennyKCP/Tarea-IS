@@ -1,0 +1,17 @@
+{% extends 'base.html' %}{% block title %}Registrar solicitud{% endblock %}{% block content %}
+<section class="hero"><p class="eyebrow">MESA DE AYUDA</p><h1>Gestiona solicitudes sin perderles la pista.</h1><p>Registra una solicitud, guarda su código y consulta su evolución.</p></section>
+<div class="columns">
+<section class="panel"><h2>Nueva solicitud</h2>
+<form method="post" action="{{ url_for('registrar') }}">
+<label for="solicitante">Solicitante *</label><input id="solicitante" name="solicitante" maxlength="100" required value="{{ (form_data or {}).get('solicitante','') }}" placeholder="Nombre completo">
+<label for="categoria">Categoría *</label><select id="categoria" name="categoria" required><option value="">Selecciona una categoría</option>{% for c in categorias %}<option value="{{ c }}" {% if (form_data or {}).get('categoria') == c %}selected{% endif %}>{{ c }}</option>{% endfor %}</select>
+<label for="descripcion">Descripción *</label><textarea id="descripcion" name="descripcion" maxlength="2000" required rows="4" placeholder="Explica el problema o requerimiento">{{ (form_data or {}).get('descripcion','') }}</textarea>
+<label for="prioridad">Prioridad *</label><select id="prioridad" name="prioridad" required><option value="">Selecciona prioridad</option>{% for p in prioridades %}<option value="{{ p }}" {% if (form_data or {}).get('prioridad') == p %}selected{% endif %}>{{ p }}</option>{% endfor %}</select>
+<button type="submit">Registrar solicitud</button><small>* Campos obligatorios.</small>
+</form></section>
+<section class="panel"><div class="section-heading"><h2>Consultar por código</h2></div><form method="get" id="buscar" onsubmit="event.preventDefault(); const c=document.getElementById('codigo').value.trim(); if(c) location.href='/solicitudes/'+encodeURIComponent(c); else document.getElementById('codigo').focus();"><label for="codigo">Código de solicitud</label><input id="codigo" placeholder="Ej. SOL-A1B2C3D4E5" required><button class="secondary" type="submit">Consultar solicitud</button></form>
+<div class="hint"><strong>¿Cómo funciona?</strong><p>Al registrar, el sistema genera un código único. Usa ese código para asignar técnico, actualizar el estado y revisar el historial.</p></div></section>
+</div>
+<section class="panel list-panel"><div class="section-heading"><h2>Solicitudes registradas</h2><span class="count">{{ solicitudes|length }} en total</span></div>
+{% if solicitudes %}<div class="table-wrap"><table><thead><tr><th>Código</th><th>Solicitante</th><th>Categoría</th><th>Prioridad</th><th>Estado</th><th></th></tr></thead><tbody>{% for s in solicitudes %}<tr><td><a class="code" href="{{ url_for('detalle', codigo=s.codigo) }}">{{ s.codigo }}</a></td><td>{{ s.solicitante }}</td><td>{{ s.categoria }}</td><td><span class="priority {{ s.prioridad|lower|replace('í','i') }}">{{ s.prioridad }}</span></td><td>{{ s.estado }}</td><td><a href="{{ url_for('detalle', codigo=s.codigo) }}">Ver detalle →</a></td></tr>{% endfor %}</tbody></table></div>{% else %}<p class="empty">Todavía no hay solicitudes registradas.</p>{% endif %}</section>
+{% endblock %}
